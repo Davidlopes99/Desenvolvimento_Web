@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaVault - Seu Guia para Filmes e Séries</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #e6b31e;
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #f8f9fa;
+        }
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .header {
+            background: linear-gradient(to right, #000000, #434343);
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .mainTitle {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+        .nav-tabs .nav-link {
+            color: var(--text-color);
+            border: none;
+            padding: 10px 20px;
+            margin-right: 5px;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: var(--primary-color);
+            color: #000;
+            border-radius: 5px;
+        }
+        .carousel-section {
+            margin-bottom: 3rem;
+        }
+        .section-title {
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        .section-title::after {
+            content: '';
+            height: 2px;
+            flex-grow: 1;
+            background-color: var(--primary-color);
+            margin-left: 15px;
+            opacity: 0.5;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+        .card-title {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        .card-text {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        .carousel-control-prev, .carousel-control-next {
+            width: 5%;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            height: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .rating-badge {
+            background-color: var(--primary-color);
+            color: #000;
+            font-weight: bold;
+        }
+        .year {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .navbar-brand {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        .navbar-nav .nav-link {
+            color: var(--text-color);
+            margin: 0 10px;
+            position: relative;
+        }
+        .navbar-nav .nav-link.active {
+            color: var(--primary-color);
+        }
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        .media-card {
+            cursor: pointer;
+        }
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+        .btn-warning {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .poster-img {
+            height: 300px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">MediaVault</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="filmes.html">Filmes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="series.html">Séries</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sobre.html">Sobre</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="header">
+        <h1 class="mainTitle">MediaVault</h1>
+        <p class="subtitle">Seu guia para filmes e séries em streaming</p>
+    </header>
+
+    <div class="container">
+        <!-- Alerta -->
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <strong>Bem-vindo!</strong> Descubra os melhores filmes e séries em nosso catálogo atualizado.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Abas de conteúdo -->
+        <ul class="nav nav-tabs mb-4" id="contentTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">Todos</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="movies-tab" data-bs-toggle="tab" data-bs-target="#movies" type="button" role="tab">Filmes</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="series-tab" data-bs-toggle="tab" data-bs-target="#series" type="button" role="tab">Séries</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="contentTabsContent">
+            <!-- Aba Todos -->
+            <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+                
+                <!-- Filmes Populares -->
+                <div class="carousel-section">
+                    <h2 class="section-title">Filmes Populares</h2>
+                    <div id="movieCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class="row row-cols-1 row-cols-md-4 g-4">
+                                    <div class="col">
+                                        <div class="card media-card h-100" data-bs-toggle="modal" data-bs-target="#movieModal1">
+                                            <img src="https://via.placeholder.com/300x450?text=Filme+1" class="card-img-top poster-img" alt="Filme 1">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Duna: Parte 2</h5>
+                                                    <span class="badge rounded-pill rating-badge">8.5</span>
+                                                </div>
+                                                <p class="card-text">Paul Atreides se une aos Fremen e inicia uma jornada de vingança contra os conspiradores que destruíram sua família.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2024</span>
+                                                    <span class="badge bg-secondary">Ficção Científica</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100" data-bs-toggle="modal" data-bs-target="#movieModal2">
+                                            <img src="https://via.placeholder.com/300x450?text=Filme+2" class="card-img-top poster-img" alt="Filme 2">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Oppenheimer</h5>
+                                                    <span class="badge rounded-pill rating-badge">8.7</span>
+                                                </div>
+                                                <p class="card-text">A história do cientista americano J. Robert Oppenheimer e seu papel no desenvolvimento da bomba atômica.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2023</span>
+                                                    <span class="badge bg-secondary">Drama</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100" data-bs-toggle="modal" data-bs-target="#movieModal3">
+                                            <img src="https://via.placeholder.com/300x450?text=Filme+3" class="card-img-top poster-img" alt="Filme 3">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Furiosa</h5>
+                                                    <span class="badge rounded-pill rating-badge">7.9</span>
+                                                </div>
+                                                <p class="card-text">A história da origem de Furiosa antes dos eventos de Mad Max: Estrada da Fúria.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2024</span>
+                                                    <span class="badge bg-secondary">Ação</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100" data-bs-toggle="modal" data-bs-target="#movieModal4">
+                                            <img src="https://via.placeholder.com/300x450?text=Filme+4" class="card-img-top poster-img" alt="Filme 4">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Barbie</h5>
+                                                    <span class="badge rounded-pill rating-badge">7.0</span>
+                                                </div>
+                                                <p class="card-text">Barbie e Ken estão tendo o tempo de suas vidas no colorido e aparentemente perfeito mundo de Barbie Land.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2023</span>
+                                                    <span class="badge bg-secondary">Comédia</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="row row-cols-1 row-cols-md-4 g-4">
+                                    <div class="col">
+                                        <div class="card media-card h-100">
+                                            <img src="https://via.placeholder.com/300x450?text=Filme+5" class="card-img-top poster-img" alt="Filme 5">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Avatar: O Caminho da Água</h5>
+                                                    <span class="badge rounded-pill rating-badge">7.6</span>
+                                                </div>
+                                                <p class="card-text">Jake Sully e Neytiri formaram uma família e fazem de tudo para ficarem juntos.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2022</span>
+                                                    <span class="badge bg-secondary">Aventura</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100">
+                                            <img src="https://via.placeholder.com/300x450?text=Filme+6" class="card-img-top poster-img" alt="Filme 6">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Deadpool & Wolverine</h5>
+                                                    <span class="badge rounded-pill rating-badge">8.2</span>
+                                                </div>
+                                                <p class="card-text">Deadpool convence Wolverine a sair da aposentadoria para uma última aventura.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2024</span>
+                                                    <span class="badge bg-secondary">Ação</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100">
+                                            <img src="https://via.placeholder.com/300x450?text=Filme+7" class="card-img-top poster-img" alt="Filme 7">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Twisters</h5>
+                                                    <span class="badge rounded-pill rating-badge">7.8</span>
+                                                </div>
+                                                <p class="card-text">Uma equipe de caçadores de tornados enfrenta tempestades sem precedentes.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2024</span>
+                                                    <span class="badge bg-secondary">Ação</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100">
+                                            <img src="https://via.placeholder.com/300x450?text=Filme+8" class="card-img-top poster-img" alt="Filme 8">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Godzilla e Kong</h5>
+                                                    <span class="badge rounded-pill rating-badge">7.1</span>
+                                                </div>
+                                                <p class="card-text">Os titãs Godzilla e Kong se unem contra uma nova ameaça que põe sua existência em risco.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2024</span>
+                                                    <span class="badge bg-secondary">Ação</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#movieCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#movieCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Séries Populares nos Streamers -->
+                <div class="carousel-section">
+                    <h2 class="section-title">Séries Populares nos Principais Streamers</h2>
+                    <div id="seriesCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class="row row-cols-1 row-cols-md-4 g-4">
+                                    <div class="col">
+                                        <div class="card media-card h-100" data-bs-toggle="modal" data-bs-target="#seriesModal1">
+                                            <img src="https://via.placeholder.com/300x450?text=Serie+1" class="card-img-top poster-img" alt="Série 1">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">House of the Dragon</h5>
+                                                    <span class="badge rounded-pill rating-badge">8.3</span>
+                                                </div>
+                                                <p class="card-text">A história da Casa Targaryen 200 anos antes dos eventos de Game of Thrones.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2022-</span>
+                                                    <span class="badge bg-secondary">Fantasia</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100" data-bs-toggle="modal" data-bs-target="#seriesModal2">
+                                            <img src="https://via.placeholder.com/300x450?text=Serie+2" class="card-img-top poster-img" alt="Série 2">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">The Last of Us</h5>
+                                                    <span class="badge rounded-pill rating-badge">8.8</span>
+                                                </div>
+                                                <p class="card-text">Joel e Ellie, conectados pela dureza do mundo em que vivem, são forçados a enfrentar circunstâncias brutais e assassinos impiedosos em uma jornada pelos EUA após um surto apocalíptico.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2023-</span>
+                                                    <span class="badge bg-secondary">Drama</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100" data-bs-toggle="modal" data-bs-target="#seriesModal3">
+                                            <img src="https://via.placeholder.com/300x450?text=Serie+3" class="card-img-top poster-img" alt="Série 3">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">O Urso</h5>
+                                                    <span class="badge rounded-pill rating-badge">8.7</span>
+                                                </div>
+                                                <p class="card-text">Um jovem chef volta para Chicago para administrar a lanchonete da família após a morte trágica de seu irmão.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2022-</span>
+                                                    <span class="badge bg-secondary">Comédia</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100" data-bs-toggle="modal" data-bs-target="#seriesModal4">
+                                            <img src="https://via.placeholder.com/300x450?text=Serie+4" class="card-img-top poster-img" alt="Série 4">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Fallout</h5>
+                                                    <span class="badge rounded-pill rating-badge">8.5</span>
+                                                </div>
+                                                <p class="card-text">Baseada na famosa franquia de jogos, a série segue sobreviventes em um mundo pós-apocalíptico nuclear.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2024-</span>
+                                                    <span class="badge bg-secondary">Sci-Fi</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="row row-cols-1 row-cols-md-4 g-4">
+                                    <div class="col">
+                                        <div class="card media-card h-100">
+                                            <img src="https://via.placeholder.com/300x450?text=Serie+5" class="card-img-top poster-img" alt="Série 5">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Bridgerton</h5>
+                                                    <span class="badge rounded-pill rating-badge">7.5</span>
+                                                </div>
+                                                <p class="card-text">Os oito irmãos da família Bridgerton buscam amor e felicidade na alta sociedade londrina.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2020-</span>
+                                                    <span class="badge bg-secondary">Drama</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100">
+                                            <img src="https://via.placeholder.com/300x450?text=Serie+6" class="card-img-top poster-img" alt="Série 6">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Wandinha</h5>
+                                                    <span class="badge rounded-pill rating-badge">8.1</span>
+                                                </div>
+                                                <p class="card-text">Wednesday Addams investiga uma série de assassinatos enquanto faz novos amigos e inimigos na Academia Nevermore.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2022-</span>
+                                                    <span class="badge bg-secondary">Comédia</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100">
+                                            <img src="https://via.placeholder.com/300x450?text=Serie+7" class="card-img-top poster-img" alt="Série 7">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Stranger Things</h5>
+                                                    <span class="badge rounded-pill rating-badge">8.7</span>
+                                                </div>
+                                                <p class="card-text">Quando um garoto desaparece, uma pequena cidade descobre um mistério envolvendo experimentos secretos.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2016-</span>
+                                                    <span class="badge bg-secondary">Sci-Fi</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card media-card h-100">
+                                            <img src="https://via.placeholder.com/300x450?text=Serie+8" class="card-img-top poster-img" alt="Série 8">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">The Boys</h5>
+                                                    <span class="badge rounded-pill rating-badge">8.7</span>
+                                                </div>
+                                                <p class="card-text">Um grupo de vigilantes combate super-heróis que abusam de seus superpoderes.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2019-</span>
+                                                    <span class="badge bg-secondary">Ação</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#seriesCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#seriesCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filmes da Netflix -->
+                <div class="carousel-section">
+                    <h2 class="section-title">Filmes Populares na Netflix</h2>
+                    <div id="netflixMovieCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class="row row-cols-1 row-cols-md-4 g-4">
+                                    <div class="col">
+                                        <div class="card media-card h-100">
+                                            <div class="position-absolute top-0 end-0 p-2">
+                                                <span class="badge bg-danger">Netflix</span>
+                                            </div>
+                                            <img src="https://via.placeholder.com/300x450?text=Netflix+1" class="card-img-top poster-img" alt="Netflix 1">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title">Atlas</h5>
+                                                    <span class="badge rounded-pill rating-badge">6.5</span>
+                                                </div>
+                                                <p class="card-text">Uma analista de dados desconfiada de IA deve se aliar à tecnologia que mais teme para deter um robô rebelde.</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="year">2024</span>
+                                                    <span class="badge bg-secondary">Sci-Fi</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
